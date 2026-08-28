@@ -2,6 +2,10 @@
 
 Design Thinking Lab prototype: soil-moisture-triggered irrigation with a weather-API rain check, built to stop the common failure mode of timer-based irrigation, watering when the soil is already wet or rain is on the way.
 
+<img src="images/1.png" alt="3D-printed probe housing, red enclosure with electrodes" width="260"> <img src="images/2.png" alt="Circuit diagram: NodeMCU, relay, soil probe, pump, Blynk and weather API" width="420">
+
+3D-printed probe housing and the full wiring: NodeMCU/ESP32, relay, FC-28 probe, pump, with Blynk and the weather API on the Wi-Fi side.
+
 ## What this repo is
 
 This is the deliverables archive for an RVCE Design Thinking Lab project (AS247DL/ME247DL, Team Hypernova, submitted 10 June 2025), not a source code repo. It holds the report, poster, presentation, and photo/video documentation of the hardware prototype. The ESP32/Arduino firmware and Blynk dashboard configuration described in the report are not included here.
@@ -11,6 +15,29 @@ This is the deliverables archive for an RVCE Design Thinking Lab project (AS247D
 A capacitive soil-moisture probe reads the ground. If moisture is below threshold and OpenWeatherMap says no rain in the next 24 hours, a relay switches a pump on. If rain is forecast, the system waits. If the forecast is wrong and moisture keeps dropping past a second, lower threshold, the pump turns on anyway, so a bad forecast can't leave a plant dry. Everything reports to a Blynk dashboard with a manual pump override.
 
 The survey behind this (~70 responses): 85.7% of respondents still water by hand, and 75.4% wanted a semi-automatic system they could still override, not a fully closed loop. That's why the manual switch exists on the dashboard rather than the loop running unattended.
+
+### Control logic
+
+```
+read soil moisture
+        |
+moisture < threshold_low?  --no--> pump stays off, keep polling
+        | yes
+        v
+check OpenWeatherMap: rain in next 24h?
+        |                       |
+       yes                      no
+        |                       |
+ wait, re-poll moisture    pump ON, report to Blynk
+        |
+moisture < threshold_failsafe (lower than threshold_low)?
+        |
+       yes --> pump ON anyway (forecast override, plant doesn't die on a bad forecast)
+        |
+        no --> keep waiting
+```
+
+The failsafe threshold exists specifically because a wrong "no rain" forecast that gets acted on (wait, don't water) is the failure mode that matters most, a plant that goes too dry while the system is waiting on a forecast that never delivers. The second, lower threshold catches that case regardless of what the weather API said.
 
 ## Hardware
 
@@ -23,13 +50,13 @@ The survey behind this (~70 responses): 85.7% of respondents still water by hand
 | Blynk | Dashboard: moisture, rain probability, pump on/off, temperature, manual override |
 | 3D-printed enclosure (SolidWorks) | Houses the probe and electronics, designed to push into soil |
 
-<img src="images/1.png" alt="3D-printed probe housing, red enclosure with electrodes" width="300">
+## Project milestones
 
-3D-printed housing with the probe electrodes exposed at the bottom.
+<img src="images/review_1.jpg" alt="Design review 1" width="270"> <img src="images/review_2.jpg" alt="Design review 2" width="270"> <img src="images/review_3.jpg" alt="Design review 3" width="270">
 
-<img src="images/2.png" alt="Circuit diagram: NodeMCU, relay, soil probe, pump, Blynk and weather API" width="500">
+Review 1 through 3: concept sketch to working prototype, in order.
 
-Wiring: NodeMCU/ESP32, relay, FC-28 probe, pump, with Blynk and the weather API on the Wi-Fi side.
+<img src="images/report.jpg" alt="Project report cover" width="200"> <img src="images/ppt.jpg" alt="Presentation deck cover" width="200"> <img src="images/video.jpg" alt="Prototype demo video thumbnail" width="200">
 
 ## Documentation
 
@@ -37,8 +64,6 @@ Wiring: NodeMCU/ESP32, relay, FC-28 probe, pump, with Blynk and the weather API 
 - [`docs/DTL Presentation.pdf`](docs/DTL%20Presentation.pdf) / `.pptx` — presentation deck
 - [`docs/DTL Poster.pdf`](docs/DTL%20Poster.pdf) — project poster
 - [`videos/Video.mp4`](videos/Video.mp4) — prototype demo
-
-Review photos from project milestones are in `images/review_1.jpg`, `review_2.jpg`, `review_3.jpg`.
 
 ## What was tested
 
