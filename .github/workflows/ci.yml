@@ -1,0 +1,13 @@
+name: CI
+on:
+  push:
+  pull_request:
+jobs:
+  docs-sanity:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check script compiles
+        run: python3 -m py_compile .github/scripts/check_links.py
+      - name: Check README/CONTRIBUTING/CHANGELOG links and referenced files exist
+        run: python3 .github/scripts/check_links.py

@@ -1,6 +1,14 @@
 # Cloud-Based Irrigation System
 
-Design Thinking Lab prototype: soil-moisture-triggered irrigation with a weather-API rain check, built to stop the common failure mode of timer-based irrigation, watering when the soil is already wet or rain is on the way.
+Soil-moisture sensor and weather-API rain check decide when a pump waters, so plants aren't watered when soil is wet or rain is coming.
+
+![demo](docs/demo.gif)
+
+```
+git clone https://github.com/shanthoshkv/Cloud-based-irrigation-system-to-counteract-over-irrigation
+```
+
+Nothing to flash or run: this repo is the project archive (report, poster, slides, photos, video). The firmware is not included (see Known gap below).
 
 <img src="images/1.png" alt="3D-printed probe housing, red enclosure with electrodes" width="260"> <img src="images/2.png" alt="Circuit diagram: NodeMCU, relay, soil probe, pump, Blynk and weather API" width="420">
 
